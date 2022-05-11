@@ -1,5 +1,5 @@
-<?php 
-include 'inc/data-collector.php';
+<?php
+
 include 'php/db.php';
 
 $currentQuestionIndex = 0;
@@ -15,20 +15,24 @@ if (isset($_POST['lastQuestionIndex'])) {
 if (isset($_SESSION['questions'])) {
     $questions = $_SESSION['questions'];
 }
-//else{
-//    $questions = getQuestions();
-//    $_SESSION['questions'] = $questions;
-//}
-?>
+else{
+    $questions = getQuestions();
+    $_SESSION['questions'] = $questions;
+}
 
+
+//echo "<pre>";
+//print_r($_SESSION['questions']);
+//echo "</pre>";
+?>
 
 <?php include 'inc/head.php' ?>
 
 <body>
+    
     <?php include 'inc/header.php' ?>
 
     <main>
-
 
         <div class='px-4 py-5 my-5 text-center'>
 
@@ -37,31 +41,20 @@ if (isset($_SESSION['questions'])) {
             <div class='col-lg-6 mx-auto'>
                 <p class='lead mb-4'><?php echo $questions[$currentQuestionIndex]['Text']; ?></p>
 
-                <form  <?php if ($currentQuestionIndex + 1 >= count($questions)) echo 'action="result.php"'; ?> method='post' onsubmit="return validateQuestion();">
+                <form method='post' onsubmit="return validateQuestion();">
 
                     <?php
                     $answers = $questions[$currentQuestionIndex]['Answers'];
-                    $isMultipleChoice = $questions[$currentQuestionIndex]['isMultipleChoice'];
-                    $maxPoints = 0;
                     
 
                     for ($i = 0; $i < count($answers); $i++) {
                         echo "<div class='form-check'>";
 
                         $isCorrect = $answers[$i]['IsCorrectAnswer'];
-                        
-                        if ($isMultipleChoice == 1) {
-                            echo " <input class='form-check-input' type='checkbox' name='a-" . $i . "' value='" . $isCorrect . "' id=i-" . $i . "'><br> ";
+                        echo " <input class='form-check-input' type='checkbox' value='" . $isCorrect . "'  id='flexCheckDefault' ><br> ";
+                        echo " <label class='form-check-label' for='flexCheckDefault'> ";
 
-                        }
-                        else {
-                            echo " <input class='form-check-input' type='radio' name'a-0' value='" . $isCorrect . "'  id='i-" . $i . "' ><br> ";
-                        }
-                        
-                        $maxPoints += $isCorrect;
-                        
-                        echo " <label class='form-check-label' for='i-" . $i . "'> ";
-
+                        $answers = $questions[$currentQuestionIndex]['Answers'];
                         echo $answers[$i]['Text'];
 
                         echo "</label>";
@@ -71,7 +64,6 @@ if (isset($_SESSION['questions'])) {
 
                     <input type="hidden" name="lastQuestionIndex" value="<?php echo $currentQuestionIndex; ?>">
                     <input type="hidden" name="nextQuestionIndex" value="<?php echo $currentQuestionIndex + 1; ?>">
-                    <input type="hidden" name="maxPoints" value="<?php echo $maxPoints; ?>"
 
                     <p id='validation-warning' class='warning'></p>
 
@@ -87,5 +79,3 @@ if (isset($_SESSION['questions'])) {
     </main>
 
 </body>
-
-</html>
